@@ -21,10 +21,23 @@ def generate():
     reference = ""
     if "reference" in request.form:
         reference = request.form["reference"]
-        sys_setting = """あなたはプロのCS担当者です。この仕様書を読んで、ユーザー向けのFAQを作成してください。"""
+        sys_setting = """
+        あなたはプロのCS担当者です。この仕様書を読んで、ユーザー向けのFAQを作成してください。
+        回答のフォーマット：
+        Q: 質問の内容
+        A: 回答の内容
+        """
         faq, _ = ask_to_chatgpt(reference, sys_setting)
+        print(faq)
 
-    return render_template("index.html", faq=faq)
+        output = ""
+        for line in faq.split("\n"):
+            if line.startswith("Q:"):
+                output += f"<h4>{line}</h4>"
+            elif line.startswith("A:"):
+                output += f"<p>{line}</p>"
+
+    return render_template("index.html", faq=output)
 
 
 def ask_to_chatgpt(prompt: str, sys_setting: str) -> tuple[str, int]:
