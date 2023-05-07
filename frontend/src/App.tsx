@@ -1,49 +1,82 @@
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
+import {
+  Container,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  CircularProgress,
+} from "@mui/material";
 import axios from "axios";
 
 function App() {
-  const [inputText, setInputText] = useState("");
+  const [specText, setSpecText] = useState("");
   const [faqText, setFaqText] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleButtonClick = async () => {
+  const handleGenerateFaq = async () => {
+    setIsLoading(true);
     try {
       const response = await axios.post("http://localhost:8000/generate-faq", {
-        text: inputText,
+        text: specText,
       });
       setFaqText(response.data.faq);
     } catch (error) {
-      console.error("Error while generating FAQ:", error);
+      console.error("Error generating FAQ:", error);
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const handleCopyFaq = () => {
+    navigator.clipboard.writeText(faqText);
   };
 
   return (
     <Container maxWidth="md">
-      <Box my={4}>
+      <Box sx={{ my: 4 }}>
+        <Typography variant="h4" component="h1" gutterBottom>
+          FAQ Generator
+        </Typography>
         <TextField
-          fullWidth
+          label="Service Specifications"
           multiline
-          rows={10}
-          label="新機能の仕様を入力"
-          variant="outlined"
-          value={inputText}
-          onChange={(event) => setInputText(event.target.value)}
+          rows={6}
+          fullWidth
+          value={specText}
+          onChange={(e) => setSpecText(e.target.value)}
         />
-        <Box my={2}>
+        <Box sx={{ my: 2 }}>
           <Button
             variant="contained"
             color="primary"
-            onClick={handleButtonClick}
+            onClick={handleGenerateFaq}
+            disabled={isLoading}
+            startIcon={isLoading ? <CircularProgress size={24} /> : null}
           >
-            FAQを作成
+            {isLoading ? "Generating FAQ..." : "Generate FAQ"}
           </Button>
         </Box>
-        {faqText && (
-          <Box my={2}>
-            <Typography variant="h6">FAQ:</Typography>
-            <Typography>{faqText}</Typography>
-          </Box>
-        )}
+        <TextField
+          label="Generated FAQ"
+          multiline
+          rows={6}
+          fullWidth
+          value={faqText}
+          InputProps={{
+            readOnly: true,
+          }}
+        />
+        <Box sx={{ my: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCopyFaq}
+            disabled={!faqText}
+          >
+            Copy FAQ
+          </Button>
+        </Box>
       </Box>
     </Container>
   );
