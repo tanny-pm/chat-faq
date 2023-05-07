@@ -1,11 +1,20 @@
-import { Container, TextField, Button, Box } from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useState } from "react";
+import axios from "axios";
 
 function App() {
   const [inputText, setInputText] = useState("");
+  const [faqText, setFaqText] = useState("");
 
-  const handleButtonClick = () => {
-    console.log(inputText);
+  const handleButtonClick = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/generate-faq", {
+        text: inputText,
+      });
+      setFaqText(response.data.faq);
+    } catch (error) {
+      console.error("Error while generating FAQ:", error);
+    }
   };
 
   return (
@@ -29,6 +38,12 @@ function App() {
             FAQを作成
           </Button>
         </Box>
+        {faqText && (
+          <Box my={2}>
+            <Typography variant="h6">FAQ:</Typography>
+            <Typography>{faqText}</Typography>
+          </Box>
+        )}
       </Box>
     </Container>
   );
