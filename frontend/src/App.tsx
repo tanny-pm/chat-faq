@@ -1,13 +1,32 @@
-import React, { useState } from "react";
 import {
+  Box,
+  Button,
+  CircularProgress,
   Container,
   TextField,
-  Button,
-  Typography,
-  Box,
-  CircularProgress,
 } from "@mui/material";
 import axios from "axios";
+import { useState } from "react";
+
+import { styled } from "@mui/system";
+
+const Title = styled("h1")({
+  fontSize: "2rem",
+  fontWeight: "bold",
+  background: "linear-gradient(135deg, #FF8E53 30%, #FE6B8B 90%)",
+  WebkitBackgroundClip: "text",
+  WebkitTextFillColor: "transparent",
+});
+
+const GradientButton = styled(Button)({
+  background: "linear-gradient(135deg, #FF8E53 30%, #FE6B8B 90%)",
+  borderRadius: 3,
+  border: 0,
+  color: "white",
+  height: 48,
+  padding: "0 30px",
+  boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+});
 
 function App() {
   const [specText, setSpecText] = useState("");
@@ -35,9 +54,7 @@ function App() {
   return (
     <Container maxWidth="md">
       <Box sx={{ my: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          FAQ Generator
-        </Typography>
+        <Title>FAQ Generator</Title>
         <TextField
           label="Service Specifications"
           multiline
@@ -47,7 +64,7 @@ function App() {
           onChange={(e) => setSpecText(e.target.value)}
         />
         <Box sx={{ my: 2 }}>
-          <Button
+          <GradientButton
             variant="contained"
             color="primary"
             onClick={handleGenerateFaq}
@@ -55,8 +72,9 @@ function App() {
             startIcon={isLoading ? <CircularProgress size={24} /> : null}
           >
             {isLoading ? "Generating FAQ..." : "Generate FAQ"}
-          </Button>
+          </GradientButton>
         </Box>
+
         <TextField
           label="Generated FAQ"
           multiline
@@ -68,14 +86,14 @@ function App() {
           }}
         />
         <Box sx={{ my: 2 }}>
-          <Button
+          <GradientButton
             variant="contained"
             color="primary"
             onClick={handleCopyFaq}
             disabled={!faqText}
           >
             Copy FAQ
-          </Button>
+          </GradientButton>
         </Box>
       </Box>
     </Container>
